@@ -1,14 +1,28 @@
 
-const sql = require('better-sqlite3')
+const Database = require('better-sqlite3')
 
-const app = express()
+const db = Database("Database.db")
 
-const db = new sql("database.db")
+//EXECUTE THE TABLE MAKING PROCESS 
+db.exec(`
+        CREATE TABLE IF NOT EXISTS user(
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            user VARCHAR(50) NOT NULL,
+            pass VARCHAR(50) NOT NULL
+        )
+    `);
 
-db.exec(`CREATE TABLE IF NOT EXISTS users (
-    id INT PRIMARY KEY AUTOINCREMENT,
-    username TEXT NOT NULL,
-    password TEXT NOT NULL
-)`)
+// INSERT INTO TABLE WITH PLACEHOLDER
+const insert = db.prepare(`INSERT INTO user(user,pass) VALUES(? ,?)`);
 
-module.exports = db;
+//READ / SELECT FROM TABLE AND GET DATA 
+const read = db.prepare(`SELECT * FROM user`);
+
+//INSERTING INTO DATABASE(SQLITE)
+insert.run("Varun","12345");
+
+//READ QUERY TO USER VARIABLE(DATA->USERS)
+const users = read.all();
+
+console.log(users);
+
